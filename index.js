@@ -47,7 +47,6 @@ app.post('/api/users/:_id/exercises', (req, res, next) => {
   try {
     const { description, duration, date } = req.body
     const user_id = req.params._id
-    console.log('date', date)
     // let _date = new Date(date) ?? new Date()
     let _date;
     if (date) {
@@ -55,7 +54,6 @@ app.post('/api/users/:_id/exercises', (req, res, next) => {
     } else {
       _date = new Date()
     }
-    console.log('_date', _date)
     const exercise = new Exercise({
       description, 
       duration, 
@@ -67,12 +65,11 @@ app.post('/api/users/:_id/exercises', (req, res, next) => {
         throw err
       }
       const user = await User.findById(data.user_id).exec()
-      console.log("user", user)
       const response = {
         username: user.username,
         description: data.description,
         duration: data.duration,
-        date: data.date,
+        date: new Date(data.date).toDateString(),
         _id: user._id
       }
       res.status(200).json(response)
@@ -89,7 +86,6 @@ app.get('/api/users', (req, res, next) => {
       if (err) {
         throw err
       }
-      console.log('users', users)
       res.send(users)
     })
   } catch (error) {
@@ -115,24 +111,18 @@ app.get('/api/users/:_id/logs', async (req, res, next) => {
       query_exercises.where('date').lt(to)
     }
     const results = await query_exercises.exec()
-    // query_exercises.exec(function (err, results) {
-    //   if (err) throw err
-    //   console.log('results', results)
-    //   return res.send(results)
-    //   exercises = results
-    // })
-    console.log('exercises', results)
-    // const logs = exercises.map(exercise => ({
-    //   description: exercise.description,
-    //   duration: exercise.description,
-    //   date: exercise.date
-    // }))
-    // const response = {
-    //   username: user.username,
-    //   count: exercises.length,
-    //   logs
-    // }
-    res.send(results)
+    const logs = results.map(exercise => ({
+      description: exercise.description,
+      duration: exercise.description,
+      date: new Date(exercise.date).toDateString()
+    }))
+    const response = {
+      username: user.username,
+      _id: user._id,
+      count: results.length,
+      log: logs
+    }
+    res.send(response)
   } catch (error) {
     next(error)
   }
