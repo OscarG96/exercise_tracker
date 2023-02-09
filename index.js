@@ -54,9 +54,10 @@ app.post('/api/users/:_id/exercises', (req, res, next) => {
     } else {
       _date = new Date()
     }
+    const durationParsed = parseInt(duration)
     const exercise = new Exercise({
       description, 
-      duration, 
+      duration: durationParsed, 
       date: _date,
       user_id
     })

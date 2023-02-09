@@ -14,7 +14,7 @@ let exerciseSchema = new mongoose.Schema({
     ref: 'User'
   },
   description: String,
-  duration: String,
+  duration: Number,
   date: Date
 })
 
